@@ -1,0 +1,4 @@
+*.sw*
+hs
+test
+log.txt
