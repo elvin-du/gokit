@@ -20,6 +20,10 @@ var (
 	_gPushLimit     int  = 600 // op/min
 )
 
+const (
+	IOS_SOUND = "default"
+)
+
 var (
 	E_PUSH_FAILED = errors.New("push failed")
 )
@@ -57,7 +61,13 @@ func JPushAll(alert, sound string, badge int, extras map[string]interface{}) err
 	return jPush(_gAppKey, _gMasterSecret, alert, sound, audience, badge, _gIOSProduction, _gPushDebug, extras)
 }
 
-func JPushOne(alert, sound string, regId []string, badge int, extras map[string]interface{}) error {
+func JPushOne(alert, sound string, regId string, badge int, extras map[string]interface{}) error {
+	audience := push.NewAudience()
+	audience.SetRegistrationId([]string{regId})
+	return jPush(_gAppKey, _gMasterSecret, alert, sound, audience, badge, _gIOSProduction, _gPushDebug, extras)
+}
+
+func JPushGroup(alert, sound string, regId []string, badge int, extras map[string]interface{}) error {
 	audience := push.NewAudience()
 	audience.SetRegistrationId(regId)
 	return jPush(_gAppKey, _gMasterSecret, alert, sound, audience, badge, _gIOSProduction, _gPushDebug, extras)
@@ -69,6 +79,9 @@ var mutex sync.Mutex
 var maxPush = make(chan struct{}, _gPushLimit)
 
 func jPush(appKey, masterSecret, alert, sound string, audience *push.Audience, badge int, iosProduction, debug bool, extras map[string]interface{}) error {
+	if sound == "" {
+		sound = IOS_SOUND
+	}
 	//限速
 	maxPush <- struct{}{}
 	defer func() {
