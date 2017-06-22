@@ -15,6 +15,10 @@ import (
 ctx: 必须为指向结构体的指针
 */
 func Parse(row mysql.Row, res mysql.Result, ctx interface{}) error {
+	if nil == row || nil == res || nil == ctx {
+		return errors.New("args cannot be nil")
+	}
+
 	tp := reflect.TypeOf(ctx)
 	if tp.Kind() != reflect.Ptr {
 		return errors.New("non-ptr")
@@ -57,6 +61,10 @@ func Parse(row mysql.Row, res mysql.Result, ctx interface{}) error {
 i: 必须为结构体或者结构体指针
 */
 func Columns(i interface{}) (string, error) {
+	if nil == i {
+		return "", errors.New("args cannot be nil")
+	}
+
 	sqlStr := ""
 	tp := reflect.TypeOf(i)
 	if tp.Kind() == reflect.Ptr {

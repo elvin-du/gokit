@@ -28,7 +28,7 @@ var (
 	E_PUSH_FAILED = errors.New("push failed")
 )
 
-func loadPushConf() {
+func LoadPushConf() {
 	err := config.Get("push:jpush:app_key", &_gAppKey)
 	if err != nil {
 		log.Fatalln(err)
